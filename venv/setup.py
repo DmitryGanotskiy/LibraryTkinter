@@ -78,25 +78,25 @@ class TK:
         If the number of book entries is less than 11, a new entry is added.
         """
         if self.count < 11:
-            bookEntry = Frame(self.booksFrame)
-            bookEntry.pack(fill=X, padx=20, pady=5)
+            self.bookEntry = Frame(self.booksFrame)
+            self.bookEntry.pack(fill=X, padx=20, pady=5)
 
             id = len(self.entries)
-            idLabel = Label(bookEntry, text=f"ID: {id}", width=8)
+            idLabel = Label(self.bookEntry, text=f"ID: {id}", width=8)
             idLabel.pack(side=LEFT, padx=(0, 10))
 
-            nameLabel = Label(bookEntry, text="Name: ", width=8)
+            nameLabel = Label(self.bookEntry, text="Name: ", width=8)
             nameLabel.pack(side=LEFT, padx=(20, 10))
-            nameEntry = Entry(bookEntry)
+            nameEntry = Entry(self.bookEntry)
             nameEntry.pack(side=LEFT)
 
-            availabilityLabel = Label(bookEntry, text="Availability:", width=12)
+            availabilityLabel = Label(self.bookEntry, text="Availability:", width=12)
             availabilityLabel.pack(side=LEFT, padx=(20, 10))
             bolean = BooleanVar()
-            availabilityCheckbox = Checkbutton(bookEntry, variable=bolean)
+            availabilityCheckbox = Checkbutton(self.bookEntry, variable=bolean)
             availabilityCheckbox.pack(side=LEFT)
 
-            remove = Button(bookEntry, text="Remove", width="5", bg="gray", command= lambda entry = bookEntry: self._RemoveVar(entry))
+            remove = Button(self.bookEntry, text="Remove", width="5", bg="gray", command= lambda entry = self.bookEntry: self._RemoveVar(entry))
             remove.pack(side=LEFT, padx=(50, 10))
 
             entry = BookEntry(id, nameEntry, bolean)
@@ -122,6 +122,7 @@ class TK:
         """
         try:
             index = self.booksFrame.winfo_children().index(entry)
+            self.count-=1
 
             if index >= 0:
                 entry.destroy()
@@ -138,13 +139,14 @@ class TK:
 
     def _show(self):
         """Display book entries."""
+
+        self.addBtn.config(state=DISABLED)
         if self.showFrame:
             self.showFrame.destroy()
         if self.currentFrame:
             self.currentFrame.destroy()
 
         try:
-            self.addBtn.config(state=NORMAL)
             self.showFrame = Frame(self.booksFrame)
             self.showFrame.pack(side=LEFT, fill=BOTH, expand=True)
 
@@ -246,6 +248,7 @@ class TK:
 
                         self.borrowerDict.setdefault(entry.id, {}).setdefault(borrower, []).append(name)
                         self.borrowedBtn.config(state=NORMAL)
+                        print(self.borrowerDict)
 
             except Exception as e:
                 print(f"An unexpected error occurred during borrowing: {e}")

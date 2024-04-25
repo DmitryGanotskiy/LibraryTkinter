@@ -1,5 +1,6 @@
 from tkinter import *
 from bookEntry import BookEntry
+from console import Library
 
 class TK:
     """
@@ -22,9 +23,26 @@ class TK:
         self.currentFrame = None
         self.showFrame = None
         self._setup()
+        self._consoleOrGui()
+
+    def _conApp(self) -> None:
+        try:
+            self.tk.destroy()
+            library = Library()
+            library.run()
+        except RuntimeError as e: print(e)
+
+    def _guiApp(self) -> None:
+        self.tk.destroy()
+        self._setup()
         self._createElements()
 
-    def _setup(self):
+    def _consoleOrGui(self) -> None:
+        Button(self.tk, text="Console", width="20", height="10", bg="gray", font= ('Helvetica 17 bold'), command=self._conApp).place(x=50, y=110)
+        Button(self.tk, text="Gui", width="20", height="10", bg="gray", font= ('Helvetica 17 bold'), command=self._guiApp).place(x=440, y=110)
+
+
+    def _setup(self) -> None:
         """Configure the main application window."""
         self.tk = Tk()
         self.tk.configure(bg="gray")
@@ -33,7 +51,7 @@ class TK:
         self.tk.maxsize(800, 500)
         self.tk.title("Grades")
 
-    def _createElements(self):
+    def _createElements(self) -> None:
         """Create GUI elements such as buttons, frames, and canvas."""
         self.scrollFrame = Frame(self.tk)
         self.scrollFrame.pack(fill=BOTH, expand=True)
@@ -72,7 +90,7 @@ class TK:
 
         self.booksFrame.bind("<Configure>", self._frameConfigure)
 
-    def _addBook(self):
+    def _addBook(self) -> None:
         """
         Add a book entry to the application.
         If the number of book entries is less than 11, a new entry is added.
@@ -110,11 +128,11 @@ class TK:
         self.serviceBtn.config(state=NORMAL)
         self.showBtn.config(state=NORMAL)
 
-    def _frameConfigure(self, event):
+    def _frameConfigure(self, event) -> None:
         """Configure canvas scrolling."""
         self.canvas.configure(scrollregion=self.canvas.bbox("all"))
 
-    def _RemoveVar(self, entry):
+    def _RemoveVar(self, entry) -> None:
         """
         Remove a book entry.
         Args: entry (Frame): The entry frame to be removed.
@@ -150,6 +168,9 @@ class TK:
             self.showFrame = Frame(self.booksFrame)
             self.showFrame.pack(side=LEFT, fill=BOTH, expand=True)
 
+            # Clear the list of borrowed labels
+            self.borrowed.clear()
+
             nameCounts = []
 
             for entry in self.entries:
@@ -183,6 +204,7 @@ class TK:
             self.currentFrame.destroy()
 
         self.addBtn.config(state=DISABLED)
+        self.showBtn.config(state=DISABLED)
         self.currentFrame = Frame(self.canvas)
         self.currentFrame.pack(side=LEFT, fill=BOTH, expand=True)
 
@@ -215,7 +237,7 @@ class TK:
             self.bookName = Entry(self.currentFrame)
             self.bookName.pack(pady=(5, 5))
 
-            bookIDLabel = Label(self.currentFrame, text="Book ID or name:")
+            bookIDLabel = Label(self.currentFrame, text="Book name:")
             bookIDLabel.pack(pady=(5, 5))
             self.bookIDEntry = Entry(self.currentFrame)
             self.bookIDEntry.pack(pady=(5, 5))
